@@ -1,0 +1,201 @@
+---
+title: "Getting and Cleaning Data Course Project"
+output: html_document
+---
+
+For this project we have used **Human Activity Recognition Using Smartphones Dataset** and that can be downloaded from this link https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip
+
+## Details of Original Experiment
+
+The experiments have been carried out with a group of 30 volunteers within an age bracket of 19-48 years. 
+Each person performed six activities (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING) 
+wearing a smartphone (Samsung Galaxy S II) on the waist. Using its embedded accelerometer and gyroscope, 
+we captured 3-axial linear acceleration and 3-axial angular velocity at a constant rate of 50Hz. 
+The experiments have been video-recorded to label the data manually. The obtained dataset has been randomly
+ partitioned into two sets, where 70% of the volunteers was selected for generating the training data and 30% the test data. 
+
+The sensor signals (accelerometer and gyroscope) were pre-processed by applying noise filters and then sampled in 
+fixed-width sliding windows of 2.56 sec and 50% overlap (128 readings/window). The sensor acceleration signal, 
+which has gravitational and body motion components, was separated using a Butterworth low-pass filter into body 
+acceleration and gravity. The gravitational force is assumed to have only low frequency components, therefore a 
+filter with 0.3 Hz cutoff frequency was used. From each window, a vector of features was obtained by calculating 
+variables from the time and frequency domain. 
+
+* For each record it is provided:
+    * Triaxial acceleration from the accelerometer (total acceleration) and the estimated body acceleration.
+    * Triaxial Angular velocity from the gyroscope. 
+    * A 561-feature vector with time and frequency domain variables.
+    * Its activity label.
+    * An identifier of the subject who carried out the experiment.
+    
+* With the following notes:
+    * Features are normalized and bounded within [-1,1].
+    * Each feature vector is a row on the text file.
+    * The units used for the accelerations (total and body) are 'g's (gravity of earth -> 9.80665 m/seg2).
+    * The gyroscope units are rad/seg.
+
+###Feature Selection 
+
+The features selected for this database come from the accelerometer and gyroscope 3-axial raw signals tAcc-XYZ and tGyro-XYZ. These time domain signals (prefix 't' to denote time) were captured at a constant rate of 50 Hz. Then they were filtered using a median filter and a 3rd order low pass Butterworth filter with a corner frequency of 20 Hz to remove noise. Similarly, the acceleration signal was then separated into body and gravity acceleration signals (tBodyAcc-XYZ and tGravityAcc-XYZ) using another low pass Butterworth filter with a corner frequency of 0.3 Hz. 
+
+Subsequently, the body linear acceleration and angular velocity were derived in time to obtain Jerk signals (tBodyAccJerk-XYZ and tBodyGyroJerk-XYZ). Also the magnitude of these three-dimensional signals were calculated using the Euclidean norm (tBodyAccMag, tGravityAccMag, tBodyAccJerkMag, tBodyGyroMag, tBodyGyroJerkMag). 
+
+Finally a Fast Fourier Transform (FFT) was applied to some of these signals producing fBodyAcc-XYZ, fBodyAccJerk-XYZ, fBodyGyro-XYZ, fBodyAccJerkMag, fBodyGyroMag, fBodyGyroJerkMag. (Note the 'f' to indicate frequency domain signals). 
+
+These signals were used to estimate variables of the feature vector for each pattern:  
+'-XYZ' is used to denote 3-axial signals in the X, Y and Z directions.
+
+tBodyAcc-XYZ  
+tGravityAcc-XYZ  
+tBodyAccJerk-XYZ  
+tBodyGyro-XYZ  
+tBodyGyroJerk-XYZ  
+tBodyAccMag  
+tGravityAccMag  
+tBodyAccJerkMag  
+tBodyGyroMag  
+tBodyGyroJerkMag  
+fBodyAcc-XYZ  
+fBodyAccJerk-XYZ  
+fBodyGyro-XYZ  
+fBodyAccMag  
+fBodyAccJerkMag  
+fBodyGyroMag  
+fBodyGyroJerkMag
+
+The set of variables that were estimated from these signals are: 
+
+mean(): Mean value  
+std(): Standard deviation  
+mad(): Median absolute deviation  
+max(): Largest value in array  
+min(): Smallest value in array  
+sma(): Signal magnitude area  
+energy(): Energy measure. Sum of the squares divided by the number of values.  
+iqr(): Interquartile range  
+entropy(): Signal entropy  
+arCoeff(): Autorregresion coefficients with Burg order equal to 4  
+correlation(): correlation coefficient between two signals  
+maxInds(): index of the frequency component with largest magnitude  
+meanFreq(): Weighted average of the frequency components to obtain a mean frequency  
+skewness(): skewness of the frequency domain signal  
+kurtosis(): kurtosis of the frequency domain signal  
+bandsEnergy(): Energy of a frequency interval within the 64 bins of the FFT of each window.  
+angle(): Angle between to vectors.
+
+Additional vectors obtained by averaging the signals in a signal window sample. These are used on the angle() variable:
+
+gravityMean  
+tBodyAccMean  
+tBodyAccJerkMean  
+tBodyGyroMean  
+tBodyGyroJerkMean
+
+## Our Project Objective
+
+The goal of our project is to create a dataset from both training and test data by only selecting the measurements
+associated with either **mean** or **std** and find the average of them with respect to each activity and subject.
+
+* The dataset contains the following files related to our project:
+    * **features_info.txt**: Shows information about the variables used on the feature vector.
+    * **features.txt**: List of all features.
+    * **activity_labels.txt**: Links the class labels with their activity name.
+    * **train/X_train.txt**: Training set.
+    * **train/y_train.txt**: Training labels.
+    * **test/X_test.txt**: Test set.
+    * **test/y_test.txt**: Test labels.
+    * **train/subject_train.txt**: Each row identifies the subject who performed the activity for each window sample. Its range is from 1 to 30. 
+    * **test/subject_test.txt**: Each row identifies the subject who performed the activity for each window sample. Its range is from 1 to 30. 
+    
+As we are selecting only the measurements related to mean and std, our tidy data set contains only 85 columns out of which, the first two are activity and subject respectively.
+
+Here are the columns from the tidy data set along with locations:
+colummn position        column names  
+1                           activity  
+2                            subject  
+3                tBodyAcc-mean()-X_1  
+4                tBodyAcc-mean()-Y_1  
+5                tBodyAcc-mean()-Z_1  
+6                 tBodyAcc-std()-X_1  
+7                 tBodyAcc-std()-Y_1  
+8                 tBodyAcc-std()-Z_1  
+9             tGravityAcc-mean()-X_1  
+10            tGravityAcc-mean()-Y_1  
+11            tGravityAcc-mean()-Z_1  
+12             tGravityAcc-std()-X_1  
+13             tGravityAcc-std()-Y_1  
+14             tGravityAcc-std()-Z_1  
+15           tBodyAccJerk-mean()-X_1  
+16           tBodyAccJerk-mean()-Y_1  
+17           tBodyAccJerk-mean()-Z_1  
+18            tBodyAccJerk-std()-X_1  
+19            tBodyAccJerk-std()-Y_1  
+20            tBodyAccJerk-std()-Z_1  
+21              tBodyGyro-mean()-X_1  
+22              tBodyGyro-mean()-Y_1  
+23              tBodyGyro-mean()-Z_1  
+24               tBodyGyro-std()-X_1  
+25               tBodyGyro-std()-Y_1  
+26               tBodyGyro-std()-Z_1  
+27          tBodyGyroJerk-mean()-X_1  
+28          tBodyGyroJerk-mean()-Y_1  
+29          tBodyGyroJerk-mean()-Z_1  
+30           tBodyGyroJerk-std()-X_1  
+31           tBodyGyroJerk-std()-Y_1  
+32           tBodyGyroJerk-std()-Z_1  
+33              tBodyAccMag-mean()_1  
+34               tBodyAccMag-std()_1  
+35           tGravityAccMag-mean()_1  
+36            tGravityAccMag-std()_1  
+37          tBodyAccJerkMag-mean()_1  
+38           tBodyAccJerkMag-std()_1  
+39             tBodyGyroMag-mean()_1  
+40              tBodyGyroMag-std()_1  
+41         tBodyGyroJerkMag-mean()_1  
+42          tBodyGyroJerkMag-std()_1  
+43               fBodyAcc-mean()-X_1  
+44               fBodyAcc-mean()-Y_1  
+45               fBodyAcc-mean()-Z_1  
+46                fBodyAcc-std()-X_1  
+47                fBodyAcc-std()-Y_1  
+48                fBodyAcc-std()-Z_1  
+49           fBodyAcc-meanFreq()-X_1  
+50           fBodyAcc-meanFreq()-Y_1  
+51           fBodyAcc-meanFreq()-Z_1  
+52           fBodyAccJerk-mean()-X_1  
+53           fBodyAccJerk-mean()-Y_1  
+54           fBodyAccJerk-mean()-Z_1  
+55            fBodyAccJerk-std()-X_1  
+56            fBodyAccJerk-std()-Y_1  
+57            fBodyAccJerk-std()-Z_1  
+58       fBodyAccJerk-meanFreq()-X_1  
+59       fBodyAccJerk-meanFreq()-Y_1  
+60       fBodyAccJerk-meanFreq()-Z_1  
+61              fBodyGyro-mean()-X_1  
+62              fBodyGyro-mean()-Y_1  
+63              fBodyGyro-mean()-Z_1  
+64               fBodyGyro-std()-X_1  
+65               fBodyGyro-std()-Y_1  
+66               fBodyGyro-std()-Z_1  
+67          fBodyGyro-meanFreq()-X_1  
+68          fBodyGyro-meanFreq()-Y_1  
+69          fBodyGyro-meanFreq()-Z_1  
+70              fBodyAccMag-mean()_1  
+71               fBodyAccMag-std()_1  
+72          fBodyAccMag-meanFreq()_1  
+73      fBodyBodyAccJerkMag-mean()_1  
+74       fBodyBodyAccJerkMag-std()_1  
+75  fBodyBodyAccJerkMag-meanFreq()_1  
+76         fBodyBodyGyroMag-mean()_1  
+77          fBodyBodyGyroMag-std()_1  
+78     fBodyBodyGyroMag-meanFreq()_1  
+79     fBodyBodyGyroJerkMag-mean()_1  
+80      fBodyBodyGyroJerkMag-std()_1  
+81 fBodyBodyGyroJerkMag-meanFreq()_1  
+82              angle(tBodyAccMean_1  
+83         angle(tBodyAccJerkMean)_1  
+84             angle(tBodyGyroMean_1  
+85         angle(tBodyGyroJerkMean_1  
+
+Column names are appended with a numeric value, and that is just to avoid duplicate name issue which is evident 
+at the source data.
